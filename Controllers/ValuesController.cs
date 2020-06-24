@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using APIWithEntity.Domain;
 using APIWithEntity.Repository;
@@ -11,26 +12,36 @@ namespace APIWithEntity.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public readonly HeroContext _context;
+        public ValuesController(HeroContext context)
         {
-            return new string[] { "API started" };
-
+            _context = context;
         }
 
-        // GET api/values/insert
-        [HttpGet("teste")]
-        public ActionResult<string> Get(int id)
+        // GET api/values
+        [HttpGet]
+        //public ActionResult<IEnumerable<string>> Get()
+        //{
+        //    return new string[] { "API started" };
+
+        //}
+
+        // GET api/values/5
+        [HttpGet]
+        public ActionResult Get()
         {
-            var hero = new Hero(); //{ Name = "Iron Man" };
-            //using (var context = new HeroContext())
-            //{
-            //    //context.Add(hero);
-            //    context.Remove(hero);
-            //    context.Heros.Add(hero);
-            //}
-           
+            var listHero = _context.Heros.ToList();
+            return Ok(listHero);
+        }
+
+        // GET api/values/5
+        [HttpGet("update")]
+        public ActionResult Get(int id)
+        {
+            var hero = new Hero { Name = "Iron Man" };
+            _context.Heros.Add(hero);
+            _context.SaveChanges();
+
             return Ok();
         }
 
@@ -38,12 +49,11 @@ namespace APIWithEntity.Controllers
         [HttpPost("insert")]
         public OkObjectResult Post([FromBody] Hero hero)
         {
-            using (var context = new HeroContext())
-            {
-                //context.Add(hero);
-                //context.Remove(hero);
-                context.Heros.Add(hero);
-            }
+            //context.Add(hero);
+            //context.Remove(hero);
+            _context.Heros.Add(hero);
+            _context.SaveChanges();
+
             return Ok(hero);
         }
 
