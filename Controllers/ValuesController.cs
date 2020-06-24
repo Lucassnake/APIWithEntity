@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using APIWithEntity.Domain;
+using APIWithEntity.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIWithEntity.Controllers
@@ -21,7 +20,13 @@ namespace APIWithEntity.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
-            return "value";
+            var hero = new Hero {Name = "Iron Man"};
+            using (var context = new HeroContext())
+            {
+                context.Add(hero);
+                //context.Heros.Add(hero);
+            }
+            return Ok();
         }
 
         // POST api/values
