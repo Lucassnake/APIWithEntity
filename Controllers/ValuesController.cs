@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using APIWithEntity.Domain;
 using APIWithEntity.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace APIWithEntity.Controllers
 {
@@ -13,26 +15,36 @@ namespace APIWithEntity.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "API started" };
+
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
+        // GET api/values/insert
+        [HttpGet("teste")]
         public ActionResult<string> Get(int id)
         {
-            var hero = new Hero {Name = "Iron Man"};
-            using (var context = new HeroContext())
-            {
-                context.Add(hero);
-                //context.Heros.Add(hero);
-            }
+            var hero = new Hero(); //{ Name = "Iron Man" };
+            //using (var context = new HeroContext())
+            //{
+            //    //context.Add(hero);
+            //    context.Remove(hero);
+            //    context.Heros.Add(hero);
+            //}
+           
             return Ok();
         }
 
         // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("insert")]
+        public OkObjectResult Post([FromBody] Hero hero)
         {
+            using (var context = new HeroContext())
+            {
+                //context.Add(hero);
+                //context.Remove(hero);
+                context.Heros.Add(hero);
+            }
+            return Ok(hero);
         }
 
         // PUT api/values/5
