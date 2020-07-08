@@ -20,53 +20,56 @@ namespace APIWithEntity.Controllers
 
         // GET api/values
         [HttpGet]
-        //public ActionResult<IEnumerable<string>> Get()
-        //{
-        //    return new string[] { "API started" };
-
-        //}
-
-        // GET api/values/5
-        [HttpGet]
-        public ActionResult Get()
+        public ActionResult<IEnumerable<string>> Get()
         {
-            var listHero = _context.Heros.ToList();
-            return Ok(listHero);
+            return new string[] { "API started" };
+
         }
 
         // GET api/values/5
-        [HttpGet("update")]
-        public ActionResult Get(int id)
+        [HttpGet("allhero")]
+        public ActionResult GetAllHero()            
         {
-            var hero = new Hero { Name = "Iron Man" };
-            _context.Heros.Add(hero);
-            _context.SaveChanges();
+            // LINQ Method
+            var listHero = _context.Heros.ToList();
+            //LINQ Query
+            //var listHero = (from s in _context.Heros select s).ToList();
+            return Ok(listHero);
+        }
 
-            return Ok();
+        [HttpGet("filter/{name}")]
+        public ActionResult GetFilter(string name)
+        {
+            var filter = _context.Heros.Where(h => h.Name.Contains(name)).ToList();
+            return Ok(filter);
         }
 
         // POST api/values
         [HttpPost("insert")]
-        public OkObjectResult Post([FromBody] Hero hero)
+        public OkObjectResult Post([FromBody] Hero character)
         {
             //context.Add(hero);
-            //context.Remove(hero);
-            _context.Heros.Add(hero);
+            _context.Heros.AddRange(character);
             _context.SaveChanges();
-
-            return Ok(hero);
+            return Ok(character);
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("update/{id}")]
+        public void Put(int id, [FromBody] Hero character)
         {
+            var hero = _context.Heros.Where(h => h.Id == id).FirstOrDefault();
+            hero.Name = character.Name;            
+            _context.SaveChanges();
         }
 
         // DELETE api/values/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public void Delete(int id)
         {
+            var hero = _context.Heros.Where(x => x.Id == id).Single();
+            _context.Heros.Remove(hero);
+            _context.SaveChanges();
         }
     }
 }
